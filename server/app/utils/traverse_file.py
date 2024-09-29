@@ -1,15 +1,23 @@
 import os
 from queue import Queue
 
+
+from matplotlib import pyplot as plt
+
 from utils.process_files import process_file
 
 from logic.infinite_gpt import process_chunks, call_openai_api_higher_tokens, mock_chunks_gpt
+
+from utils.knowledge_graph import create_knowledge_graph, visualize_knowledge_graph
 
 from logic.convert_embeddings import convert_embeddings, clustering
 
 from config import SHOULD_MOCK_AI_RESPONSE
 
 import numpy as np
+
+import networkx as nx
+from pyvis.network import Network
 
 
 media_extensions = ['github','docs','jpg', 'jpeg', 'png', 'gif', 'bmp','svg', 'mp3', 'wav', 'ogg', 'mp4', 'avi', 'mkv', 'ico', 'pdf', 'nix', 'ttf', 'lock', 'pyc']
@@ -24,6 +32,10 @@ def bfs_traversal(root_dir):
     file_dict = []
 
     code_for_gpt = []
+    analyze = True
+    plot_dendrogram = True
+    analytics_list = []
+    G = nx.DiGraph()
 
     i=0
 
@@ -56,10 +68,14 @@ def bfs_traversal(root_dir):
                             i+=1
                             print(entry.path)
                             file_dict.append(entry.path)
-
-                            single_prompt, embedding = process_file(entry.path)
+                            if(analyze):
+                                single_prompt, embedding, analytics = process_file(entry.path, G, analyze=analyze)
+                                analytics_list.append(analytics)
+                            else:
+                                single_prompt, embedding = process_file(entry.path, G)
                             embedding_list.append(embedding)
                             code_for_gpt.append(single_prompt)
+                            
 
         except OSError as e:
             
@@ -89,7 +105,7 @@ def bfs_traversal(root_dir):
 
     print(reshaped_embeddings_list)
 
-    indices_list = clustering(reshaped_embeddings_list)
+    indices_list = clustering(reshaped_embeddings_list,analytics_list, plot_dendrogram=plot_dendrogram)
 
     print(indices_list)
 
@@ -126,6 +142,14 @@ def bfs_traversal(root_dir):
             user_prompt = """Give me a developers documentation of the following code. Give a brief intro, table of contents, function explanations, dependencies, API specs (if present), schema tables in markdown. Give in markdown format and try to strict to the headings"""
             process_chunks(prompt, f'docs/output{i}.md', system_prompt, user_prompt)
         i+=1
+    plt.savefig('docs/dendrogram')
+    
+    for file in analytics_list:
+        print(file)
+    if(analyze):
+        create_knowledge_graph(analytics_list, G)
+        visualize_knowledge_graph(G)
+        
 
 
 def bfs_traversal_with_models_py(root_dir):

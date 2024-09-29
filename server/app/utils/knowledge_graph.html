@@ -1,0 +1,178 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 600px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+             #config {
+                 float: left;
+                 width: 400px;
+                 height: 600px;
+             }
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+            <div id="config"></div>
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#FFD700", "id": "files", "label": "files", "shape": "dot", "size": 10, "title": "Directory: files"}, {"color": "#FFA500", "id": "files\\data_preprocessing_template.py", "label": "data_preprocessing_template.py", "shape": "dot", "size": 10, "title": "File: data_preprocessing_template.py"}, {"color": "#FFA500", "id": "files\\data_preprocessing_tools.py", "label": "data_preprocessing_tools.py", "shape": "dot", "size": 10, "title": "File: data_preprocessing_tools.py"}, {"color": "#FFD700", "id": "files\\sl", "label": "sl", "shape": "dot", "size": 10, "title": "Directory: sl"}, {"color": "#FF6666", "id": "MyClass", "label": "MyClass", "shape": "dot", "size": 10, "title": "Class: MyClass"}, {"color": "#FF6666", "id": "AnotherClass", "label": "AnotherClass", "shape": "dot", "size": 10, "title": "Class: AnotherClass"}, {"color": "#66FF66", "id": "import_data", "label": "import_data", "shape": "dot", "size": 10, "title": "Function: import_data"}, {"color": "#66FF66", "id": "function1", "label": "function1", "shape": "dot", "size": 10, "title": "Function: function1"}, {"color": "#6666FF", "id": "method1", "label": "method1", "shape": "dot", "size": 10, "title": "Method: method1"}, {"color": "#6666FF", "id": "method2", "label": "method2", "shape": "dot", "size": 10, "title": "Method: method2"}, {"color": "#FF6666", "id": "YourMom", "label": "YourMom", "shape": "dot", "size": 10, "title": "Class: YourMom"}, {"color": "#FF6666", "id": "YourSister", "label": "YourSister", "shape": "dot", "size": 10, "title": "Class: YourSister"}, {"color": "#66FF66", "id": "preprocess", "label": "preprocess", "shape": "dot", "size": 10, "title": "Function: preprocess"}, {"color": "#66FF66", "id": "steps", "label": "steps", "shape": "dot", "size": 10, "title": "Function: steps"}, {"color": "#6666FF", "id": "fat", "label": "fat", "shape": "dot", "size": 10, "title": "Method: fat"}, {"color": "#6666FF", "id": "smash", "label": "smash", "shape": "dot", "size": 10, "title": "Method: smash"}, {"color": "#FFA500", "id": "files\\sl\\simple_linear_regression.py", "label": "simple_linear_regression.py", "shape": "dot", "size": 10, "title": "File: simple_linear_regression.py"}, {"color": "#FFD700", "id": "files\\sl\\try", "label": "try", "shape": "dot", "size": 10, "title": "Directory: try"}, {"color": "#66FF66", "id": "sl", "label": "sl", "shape": "dot", "size": 10, "title": "Function: sl"}, {"color": "#66FF66", "id": "thankyou", "label": "thankyou", "shape": "dot", "size": 10, "title": "Function: thankyou"}, {"color": "#FFA500", "id": "files\\sl\\try\\trial.py", "label": "trial.py", "shape": "dot", "size": 10, "title": "File: trial.py"}, {"color": "#FF6666", "id": "CodeEntityExtractor", "label": "CodeEntityExtractor", "shape": "dot", "size": 10, "title": "Class: CodeEntityExtractor"}, {"color": "#66FF66", "id": "extract_code_entities_and_relations", "label": "extract_code_entities_and_relations", "shape": "dot", "size": 10, "title": "Function: extract_code_entities_and_relations"}, {"color": "#66FF66", "id": "create_knowledge_graph", "label": "create_knowledge_graph", "shape": "dot", "size": 10, "title": "Function: create_knowledge_graph"}, {"color": "#66FF66", "id": "visualize_knowledge_graph", "label": "visualize_knowledge_graph", "shape": "dot", "size": 10, "title": "Function: visualize_knowledge_graph"}, {"color": "#6666FF", "id": "__init__", "label": "__init__", "shape": "dot", "size": 10, "title": "Method: __init__"}, {"color": "#6666FF", "id": "visit_ClassDef", "label": "visit_ClassDef", "shape": "dot", "size": 10, "title": "Method: visit_ClassDef"}, {"color": "#6666FF", "id": "visit_FunctionDef", "label": "visit_FunctionDef", "shape": "dot", "size": 10, "title": "Method: visit_FunctionDef"}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "files", "title": "contains", "to": "files\\data_preprocessing_template.py", "width": 1}, {"arrows": "to", "from": "files", "title": "contains", "to": "files\\data_preprocessing_tools.py", "width": 1}, {"arrows": "to", "from": "files", "title": "contains", "to": "files\\sl", "width": 1}, {"arrows": "to", "from": "files\\data_preprocessing_template.py", "title": "contains", "to": "MyClass", "width": 1}, {"arrows": "to", "from": "files\\data_preprocessing_template.py", "title": "contains", "to": "AnotherClass", "width": 1}, {"arrows": "to", "from": "files\\data_preprocessing_template.py", "title": "contains", "to": "import_data", "width": 1}, {"arrows": "to", "from": "files\\data_preprocessing_template.py", "title": "contains", "to": "function1", "width": 1}, {"arrows": "to", "from": "MyClass", "title": "contains", "to": "method1", "width": 1}, {"arrows": "to", "from": "AnotherClass", "title": "contains", "to": "method2", "width": 1}, {"arrows": "to", "from": "files\\data_preprocessing_tools.py", "title": "contains", "to": "YourMom", "width": 1}, {"arrows": "to", "from": "files\\data_preprocessing_tools.py", "title": "contains", "to": "YourSister", "width": 1}, {"arrows": "to", "from": "files\\data_preprocessing_tools.py", "title": "contains", "to": "preprocess", "width": 1}, {"arrows": "to", "from": "files\\data_preprocessing_tools.py", "title": "contains", "to": "steps", "width": 1}, {"arrows": "to", "from": "YourMom", "title": "contains", "to": "fat", "width": 1}, {"arrows": "to", "from": "YourSister", "title": "contains", "to": "smash", "width": 1}, {"arrows": "to", "from": "files\\sl", "title": "contains", "to": "files\\sl\\simple_linear_regression.py", "width": 1}, {"arrows": "to", "from": "files\\sl", "title": "contains", "to": "files\\sl\\try", "width": 1}, {"arrows": "to", "from": "files\\sl\\simple_linear_regression.py", "title": "contains", "to": "sl", "width": 1}, {"arrows": "to", "from": "files\\sl\\simple_linear_regression.py", "title": "contains", "to": "thankyou", "width": 1}, {"arrows": "to", "from": "files\\sl\\try", "title": "contains", "to": "files\\sl\\try\\trial.py", "width": 1}, {"arrows": "to", "from": "files\\sl\\try\\trial.py", "title": "contains", "to": "CodeEntityExtractor", "width": 1}, {"arrows": "to", "from": "files\\sl\\try\\trial.py", "title": "contains", "to": "extract_code_entities_and_relations", "width": 1}, {"arrows": "to", "from": "files\\sl\\try\\trial.py", "title": "contains", "to": "create_knowledge_graph", "width": 1}, {"arrows": "to", "from": "files\\sl\\try\\trial.py", "title": "contains", "to": "visualize_knowledge_graph", "width": 1}, {"arrows": "to", "from": "CodeEntityExtractor", "title": "contains", "to": "__init__", "width": 1}, {"arrows": "to", "from": "CodeEntityExtractor", "title": "contains", "to": "visit_ClassDef", "width": 1}, {"arrows": "to", "from": "CodeEntityExtractor", "title": "contains", "to": "visit_FunctionDef", "width": 1}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": true,
+        "filter": [
+            "physics"
+        ]
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "repulsion": {
+            "centralGravity": 0.2,
+            "damping": 0.09,
+            "nodeDistance": 235,
+            "springConstant": 0.5,
+            "springLength": 130
+        },
+        "solver": "repulsion",
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+                  // if this network requires displaying the configure window,
+                  // put it in its div
+                  options.configure["container"] = document.getElementById("config");
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
